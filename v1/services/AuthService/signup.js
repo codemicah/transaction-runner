@@ -1,51 +1,44 @@
 const bycrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const conn = require("../../config/database");
-
-const { SECRET } = process.env;
+const { conn } = require("../../config/database");
+const { GenToken } = require("./genToken");
 
 exports.SignUp = async (data = {}) => {
-  await createTable();
+  data.password = await bycrypt.hash(data.password, 10);
 
   const { firstname, lastname, email, password } = data;
-
-  data.password = await bycrypt.hash(data.password, 10);
 
   return new Promise((resolve, reject) => {
     conn.query(
       `INSERT INTO users(firstname, lastname, email, password) VALUES(?, ?, ?, ?)`,
       [firstname, lastname, email, password],
-      (error) => {
+      async (error, result) => {
         if (error) {
           reject(error);
         } else {
-          const token = jwt.sign({ email }, SECRET, { expiresIn: 86400 });
-          resolve({ firstname, lastname, email, token });
+          try {
+            // create a balance for the user;
+            await createBalance(result.insertId);
+
+            const token = await GenToken({ email, id: result.insertId });
+            resolve({ firstname, lastname, email, token });
+          } catch (error) {
+            reject(error);
+          }
         }
       }
     );
   });
 };
 
-async function createTable() {
-  // create users table if it does not exist
+const createBalance = async (user_ref) => {
   return new Promise((resolve, reject) => {
     conn.query(
-      `CREATE TABLE IF NOT EXISTS users(
-        id INT AUTO_INCREMENT NOT NULL PRIMARY KEY, 
-        firstname TEXT NOT NULL, 
-        lastname TEXT NOT NULL, 
-        email TEXT NOT NULL, 
-        password TEXT NOT NULL
-        )`,
-      (error, result) => {
-        if (error) {
-          console.log(error);
-          reject(error);
-        } else {
-          resolve(result);
-        }
+      `INSERT INTO balances(amount, user_ref) VALUES(?, ?)`,
+      ["0.00", user_ref],
+      (error) => {
+        if (error) reject(error);
+        resolve(true);
       }
     );
   });
-}
+};

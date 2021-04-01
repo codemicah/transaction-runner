@@ -37,7 +37,7 @@ exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const response = await Login(email, password);
-    return SuccessResponse(res, "Operation sucessful", 200, response);
+    return SuccessResponse(res, "Operation successful", 200, response);
   } catch (error) {
     return ErrorResponse(res, error.message, error.code, error.toString());
   }
