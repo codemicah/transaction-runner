@@ -2,7 +2,7 @@
 
 ## Endpoints
 
-1. POST /auth/signup - create account
+1. POST **/auth/signup** - create account
 
 - Body
 
@@ -15,7 +15,7 @@
   }
   ```
 
-2. POST /auth/login - login user account
+2. POST **/auth/login** - login user account
 
 - Body
 
@@ -26,9 +26,9 @@
   }
   ```
 
-3. GET /transactions - Get all user transactions
+3. GET **/transactions** - Get all user transactions
 
-4. POST /transactions/send - Transfer/send money
+4. POST **/transactions/send** - Transfer/send money
 
 - Body
 
@@ -38,7 +38,7 @@
   }
   ```
 
-5. POST /transactions/receive - Add/receive money
+5. POST **/transactions/receive** - Add/receive money
 
 - Body
 
