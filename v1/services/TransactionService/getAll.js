@@ -6,7 +6,7 @@ exports.GetAllTransactions = async (user_id) => {
       `SELECT * FROM transactions WHERE user_ref = ${user_id}`,
       (error, result) => {
         if (error) reject(error);
-        resolve(result);
+        resolve(result.rows);
       }
     );
   });
