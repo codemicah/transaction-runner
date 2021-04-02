@@ -3,9 +3,9 @@ const {
   CreateTransaction,
   GetAllTransactions,
   CanSendMoney,
+  GetOneTransaction,
 } = require("../services/TransactionService");
 const { ErrorResponse, SuccessResponse } = require("../utils/apiResponse");
-const { ApiError } = require("../utils/apiError");
 
 exports.validateBody = (method) => {
   switch (method) {
@@ -64,6 +64,19 @@ exports.getAllTransactions = async (req, res) => {
     const user_ref = req.user.id;
 
     const response = await GetAllTransactions(user_ref);
+
+    return SuccessResponse(res, "Operation successful", 201, response);
+  } catch (error) {
+    return ErrorResponse(res, error.message, error.code, error.toString());
+  }
+};
+
+exports.getOneTransaction = async (req, res) => {
+  try {
+    const user_ref = req.user.id;
+    const { transaction_id } = req.params;
+
+    const response = await GetOneTransaction(user_ref, transaction_id);
 
     return SuccessResponse(res, "Operation successful", 201, response);
   } catch (error) {

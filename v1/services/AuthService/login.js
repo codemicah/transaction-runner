@@ -6,11 +6,13 @@ const { GenToken } = require("./genToken");
 exports.Login = async (email, password) => {
   return new Promise((resolve, reject) => {
     conn.query(
-      `SELECT * FROM users WHERE email = '${email}'`,
+      `SELECT * FROM users WHERE email = '${email}' AND is_deleted = false`,
       async (error, result) => {
         if (error) {
-          reject(error.message, 404);
+          reject(new ApiError(error.message, 404));
         } else {
+          if (!result.rows.length)
+            reject(new ApiError("Invalid credentials", 404));
           try {
             if (await bycrypt.compare(password, result.rows[0].password)) {
               delete result.rows[0].password;
@@ -24,7 +26,7 @@ exports.Login = async (email, password) => {
             }
             reject(new ApiError("Invalid Credentials", 400));
           } catch (error) {
-            reject(error);
+            reject(new ApiError(error.message, error.code));
           }
         }
       }

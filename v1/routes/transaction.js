@@ -4,6 +4,7 @@ const {
   sendMoney,
   addMoney,
   validateBody,
+  getOneTransaction,
 } = require("../controllers/transaction_controller");
 const { validate } = require("../utils/requestValidator");
 
@@ -16,5 +17,7 @@ router.post("/send", validateBody("send"), validate, sendMoney);
 router.get("/", getAllTransactions);
 
 router.post("/receive", validateBody("send"), addMoney);
+
+router.get("/:transaction_id", getOneTransaction);
 
 module.exports = router;

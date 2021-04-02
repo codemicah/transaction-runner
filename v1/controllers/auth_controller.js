@@ -29,7 +29,7 @@ exports.signup = async (req, res) => {
 
     return SuccessResponse(res, "Operation successful", 201, response);
   } catch (error) {
-    return ErrorResponse(res, error.message, 500, error.toString());
+    return ErrorResponse(res, error.message, error.code, error.toString());
   }
 };
 

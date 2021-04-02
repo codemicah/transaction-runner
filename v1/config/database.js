@@ -21,7 +21,8 @@ const initTables = () => {
         lastname TEXT NOT NULL, 
         email TEXT NOT NULL, 
         password TEXT NOT NULL,
-        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        is_deleted BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )`,
     (error) => {
       if (error) {
@@ -35,11 +36,12 @@ const initTables = () => {
     `CREATE TABLE IF NOT EXISTS transactions(
         id  serial NOT NULL PRIMARY KEY, 
         amount DECIMAL(10, 2) NOT NULL, 
-        type TEXT,
+        type TEXT NOT NULL,
         status TEXT DEFAULT 'pending',
-        user_ref INT,
+        user_ref INT NOT NULL,
         FOREIGN KEY (user_ref) REFERENCES users(id),
-        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        is_deleted BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )`,
     (error) => {
       if (error) {
@@ -53,9 +55,10 @@ const initTables = () => {
     `CREATE TABLE IF NOT EXISTS balances(
     id serial NOT NULL PRIMARY KEY,
     amount DECIMAL(10, 2) NOT NULL,
-    user_ref INT,
+    user_ref INT NOT NULL,
     FOREIGN KEY (user_ref) REFERENCES users(id),
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    is_deleted BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`,
     (error) => {
       if (error) console.log(error);

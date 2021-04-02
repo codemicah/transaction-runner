@@ -34,7 +34,7 @@ const updateBalance = async (type, amount, user_ref) => {
     conn.query(
       `SELECT * FROM balances WHERE user_ref = ${user_ref}`,
       (error, result) => {
-        if (error) reject(error);
+        if (error) reject(new ApiError(error.message, 500));
         resolve(result.rows[0]);
       }
     );
@@ -50,7 +50,7 @@ const updateBalance = async (type, amount, user_ref) => {
   let query = `UPDATE balances SET amount = ${value} WHERE user_ref = ${user_ref} RETURNING *`;
   return new Promise((resolve, reject) => {
     conn.query(query, (error, result) => {
-      if (error) reject(error);
+      if (error) reject(new ApiError(error.message, 500));
       resolve(result.rows[0].amount);
     });
   });
@@ -62,7 +62,7 @@ const updateTransactionStatus = async (transaction_id, status) => {
 
   return new Promise((resolve, reject) => {
     conn.query(query, (error, result) => {
-      if (error) reject(error);
+      if (error) reject(new ApiError(error.message, 500));
       resolve(result.rows[0]);
     });
   });
