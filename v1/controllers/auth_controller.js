@@ -1,5 +1,6 @@
 const { body } = require("express-validator");
 const { SignUp, Login } = require("../services/AuthService");
+const { UserExists } = require("../services/UserService");
 const { ErrorResponse, SuccessResponse } = require("../utils/apiResponse");
 
 exports.validateBody = (method) => {
@@ -24,6 +25,14 @@ exports.signup = async (req, res) => {
       email,
       password,
     };
+
+    if (await UserExists(email))
+      return ErrorResponse(
+        res,
+        "User already exists",
+        409,
+        "A user with this email address is already registered"
+      );
 
     const response = await SignUp(data);
 

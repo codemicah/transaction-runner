@@ -10,30 +10,26 @@ exports.SignUp = async (data = {}) => {
   const { firstname, lastname, email, password } = data;
 
   return new Promise(async (resolve, reject) => {
-    if ((await UserExists(email)) === true)
-      reject(new ApiError("User account already exists", 409));
-    else {
-      const query =
-        "INSERT INTO users(firstname, lastname, email, password) VALUES($1, $2, $3, $4) RETURNING *";
+    const query =
+      "INSERT INTO users(firstname, lastname, email, password) VALUES($1, $2, $3, $4) RETURNING *";
 
-      const values = [firstname, lastname, email, password];
+    const values = [firstname, lastname, email, password];
 
-      conn.query(query, values, async (error, result) => {
-        if (error) {
+    conn.query(query, values, async (error, result) => {
+      if (error) {
+        reject(new ApiError(error.message, 500));
+      } else {
+        try {
+          // create a balance for the user;
+          await createBalance(result.rows[0].id);
+
+          const token = await GenToken({ email, id: result.rows[0].id });
+          resolve({ firstname, lastname, email, token });
+        } catch (error) {
           reject(new ApiError(error.message, 500));
-        } else {
-          try {
-            // create a balance for the user;
-            await createBalance(result.rows[0].id);
-
-            const token = await GenToken({ email, id: result.rows[0].id });
-            resolve({ firstname, lastname, email, token });
-          } catch (error) {
-            reject(new ApiError(error.message, 500));
-          }
         }
-      });
-    }
+      }
+    });
   });
 };
 
