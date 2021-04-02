@@ -15,6 +15,15 @@
   }
   ```
 
+- Response
+  ```json
+  {
+    "success": "boolean",
+    "message": "string",
+    "data": "object"
+  }
+  ```
+
 2. POST **/auth/login** - login user account
 
 - Body
@@ -23,6 +32,16 @@
   {
     "email": "string",
     "password": "string"
+  }
+  ```
+
+  - Response
+
+  ```json
+  {
+    "success": "boolean",
+    "message": "string",
+    "data": "object"
   }
   ```
 
@@ -38,6 +57,16 @@
   }
   ```
 
+  - Response
+
+  ```json
+  {
+    "success": "boolean",
+    "message": "string",
+    "data": "object"
+  }
+  ```
+
 5. POST **/transactions/receive** - Add/receive money
 
 - Body
@@ -47,3 +76,15 @@
     "amount": "number"
   }
   ```
+
+  - Response
+
+  ```json
+  {
+    "success": "boolean",
+    "message": "string",
+    "data": "object"
+  }
+  ```
+
+  6. GET **/users/profile** - retrieve user account info
