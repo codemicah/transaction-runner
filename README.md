@@ -87,4 +87,4 @@
   }
   ```
 
-  6. GET **/users/profile** - retrieve user account info
+6. GET **/users/profile** - retrieve user account info
