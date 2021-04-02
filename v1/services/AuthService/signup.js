@@ -13,38 +13,39 @@ exports.SignUp = async (data = {}) => {
     if ((await UserExists(email)) === true)
       reject(new ApiError("User account already exists", 409));
     else {
-      conn.query(
-        "INSERT INTO users(firstname, lastname, email, password) VALUES($1, $2, $3, $4) RETURNING *",
-        [firstname, lastname, email, password],
-        async (error, result) => {
-          if (error) {
-            reject(new ApiError(error.message, 500));
-          } else {
-            try {
-              // create a balance for the user;
-              await createBalance(result.rows[0].id);
+      const query =
+        "INSERT INTO users(firstname, lastname, email, password) VALUES($1, $2, $3, $4) RETURNING *";
 
-              const token = await GenToken({ email, id: result.rows[0].id });
-              resolve({ firstname, lastname, email, token });
-            } catch (error) {
-              reject(new ApiError(error.message, 500));
-            }
+      const values = [firstname, lastname, email, password];
+
+      conn.query(query, values, async (error, result) => {
+        if (error) {
+          reject(new ApiError(error.message, 500));
+        } else {
+          try {
+            // create a balance for the user;
+            await createBalance(result.rows[0].id);
+
+            const token = await GenToken({ email, id: result.rows[0].id });
+            resolve({ firstname, lastname, email, token });
+          } catch (error) {
+            reject(new ApiError(error.message, 500));
           }
         }
-      );
+      });
     }
   });
 };
 
 const createBalance = async (user_ref) => {
   return new Promise((resolve, reject) => {
-    conn.query(
-      `INSERT INTO balances(amount, user_ref) VALUES($1, $2)`,
-      ["0.00", user_ref],
-      (error) => {
-        if (error) reject(new ApiError(error.message, 500));
-        resolve(true);
-      }
-    );
+    const query = `INSERT INTO balances(amount, user_ref) VALUES($1, $2)`;
+
+    const values = ["0.00", user_ref];
+
+    conn.query(query, values, (error) => {
+      if (error) reject(new ApiError(error.message, 500));
+      resolve(true);
+    });
   });
 };
