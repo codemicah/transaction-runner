@@ -6,7 +6,7 @@ exports.CanSendMoney = async (user_ref, amount) => {
       `SELECT * FROM balances WHERE user_ref = ${user_ref}`,
       (error, result) => {
         if (error) reject(error);
-        if (result[0].amount < amount) resolve(false);
+        if (result.rows[0].amount < amount) resolve(false);
         else resolve(true);
       }
     );

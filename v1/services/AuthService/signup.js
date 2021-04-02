@@ -9,7 +9,7 @@ exports.SignUp = async (data = {}) => {
 
   return new Promise((resolve, reject) => {
     conn.query(
-      `INSERT INTO users(firstname, lastname, email, password) VALUES(?, ?, ?, ?)`,
+      "INSERT INTO users(firstname, lastname, email, password) VALUES($1, $2, $3, $4) RETURNING *",
       [firstname, lastname, email, password],
       async (error, result) => {
         if (error) {
@@ -17,9 +17,9 @@ exports.SignUp = async (data = {}) => {
         } else {
           try {
             // create a balance for the user;
-            await createBalance(result.insertId);
+            await createBalance(result.rows[0].id);
 
-            const token = await GenToken({ email, id: result.insertId });
+            const token = await GenToken({ email, id: result.rows[0].id });
             resolve({ firstname, lastname, email, token });
           } catch (error) {
             reject(error);
@@ -33,7 +33,7 @@ exports.SignUp = async (data = {}) => {
 const createBalance = async (user_ref) => {
   return new Promise((resolve, reject) => {
     conn.query(
-      `INSERT INTO balances(amount, user_ref) VALUES(?, ?)`,
+      `INSERT INTO balances(amount, user_ref) VALUES($1, $2)`,
       ["0.00", user_ref],
       (error) => {
         if (error) reject(error);

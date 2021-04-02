@@ -12,15 +12,15 @@ exports.Login = async (email, password) => {
           reject(error.message, 404);
         } else {
           try {
-            if (await bycrypt.compare(password, result[0].password)) {
-              delete result[0].password;
+            if (await bycrypt.compare(password, result.rows[0].password)) {
+              delete result.rows[0].password;
 
-              result[0].token = await GenToken({
-                email: result[0].email,
-                id: result[0].id,
+              result.rows[0].token = await GenToken({
+                email: result.rows[0].email,
+                id: result.rows[0].id,
               });
 
-              resolve(result[0]);
+              resolve(result.rows[0]);
             }
             reject(new ApiError("Invalid Credentials", 400));
           } catch (error) {

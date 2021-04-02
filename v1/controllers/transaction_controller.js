@@ -10,7 +10,7 @@ const { ApiError } = require("../utils/apiError");
 exports.validateBody = (method) => {
   switch (method) {
     case "send":
-      return [body("amount").isNumeric(), body("type").isString()];
+      return [body("amount").isNumeric()];
   }
 };
 
