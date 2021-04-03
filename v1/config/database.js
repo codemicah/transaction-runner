@@ -4,13 +4,15 @@ const { DB_URL } = process.env;
 
 const client = new pg.Client(DB_URL);
 
-client.connect((err) => {
-  if (err) {
-    throw new Error(err);
-  }
-  console.log("Database client success");
-  initTables();
-});
+client
+  .connect()
+  .then(() => {
+    console.log("Database connected");
+    initTables();
+  })
+  .catch((err) => {
+    console.error("Database connection error", err.stack);
+  });
 
 const initTables = () => {
   // create users table if it does not exist
