@@ -1,5 +1,11 @@
 # Transaction Runner
 
+## Authentication
+
+You are provided with a token on signup with you will provide in the header of all endpoint calls.
+
+The token should be passed with the name `x-access-token`
+
 ## Endpoints
 
 1. POST **/auth/signup** - create account
@@ -47,8 +53,21 @@
 
 3. GET **/transactions** - Get all user transactions
 
+- Headers
+  ```json
+  {
+    "x-access-token": "string"
+  }
+  ```
+
 4. POST **/transactions/send** - Transfer/send money
 
+- Headers
+  ```json
+  {
+    "x-access-token": "string"
+  }
+  ```
 - Body
 
   ```json
@@ -69,6 +88,12 @@
 
 5. POST **/transactions/receive** - Add/receive money
 
+- Headers
+  ```json
+  {
+    "x-access-token": "string"
+  }
+  ```
 - Body
 
   ```json
@@ -88,3 +113,10 @@
   ```
 
 6. GET **/users/profile** - retrieve user account info
+
+- Headers
+  ```json
+  {
+    "x-access-token": "string"
+  }
+  ```
