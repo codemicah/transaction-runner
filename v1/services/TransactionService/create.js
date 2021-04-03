@@ -5,24 +5,25 @@ exports.CreateTransaction = async (data = {}) => {
   const { type, amount, user_ref } = data;
 
   return new Promise((resolve, reject) => {
-    conn.query(
-      `
-    INSERT INTO transactions(amount, user_ref, type) VALUES($1, $2, $3) RETURNING *`,
-      [`${amount}`, user_ref, type],
-      async (error, result) => {
-        if (error) {
-          reject(new ApiError(error.message, 500));
-        }
-        const balance = await updateBalance(type, amount, user_ref);
+    const query = `
+    INSERT INTO transactions(amount, user_ref, type) VALUES($1, $2, $3) RETURNING *`;
 
-        const newTransaction = await updateTransactionStatus(
-          result.rows[0].id,
-          "complete"
-        );
-
-        resolve({ transaction: newTransaction, balance });
+    conn.query(query, [`${amount}`, user_ref, type], async (error, result) => {
+      if (error) {
+        reject(new ApiError(error.message, 500));
       }
-    );
+
+      // update user's account balance
+      const balance = await updateBalance(type, amount, user_ref);
+
+      // update the transaction status after balance is updated
+      const newTransaction = await updateTransactionStatus(
+        result.rows[0].id,
+        "complete"
+      );
+
+      resolve({ transaction: newTransaction, balance });
+    });
   });
 };
 
@@ -31,13 +32,12 @@ const updateBalance = async (type, amount, user_ref) => {
   let value = 0;
 
   const balance = await new Promise((resolve, reject) => {
-    conn.query(
-      `SELECT * FROM balances WHERE user_ref = ${user_ref}`,
-      (error, result) => {
-        if (error) reject(new ApiError(error.message, 500));
-        resolve(result.rows[0]);
-      }
-    );
+    const query = `SELECT * FROM balances WHERE user_ref = ${user_ref}`;
+
+    conn.query(query, (error, result) => {
+      if (error) reject(new ApiError(error.message, 500));
+      resolve(result.rows[0]);
+    });
   });
 
   // update value based on transaction type

@@ -26,6 +26,7 @@ exports.signup = async (req, res) => {
       password,
     };
 
+    // check if user exists
     if (await UserExists(email))
       return ErrorResponse(
         res,

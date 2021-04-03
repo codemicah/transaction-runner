@@ -24,6 +24,8 @@ exports.sendMoney = async (req, res) => {
       user_ref,
       type: "transfer",
     };
+
+    // check if user has enough balance to send money
     if (await CanSendMoney(user_ref, amount)) {
       const response = await CreateTransaction(data);
       return SuccessResponse(res, "Operation successful", 201, response);
